@@ -1,0 +1,25 @@
+module default {
+    abstract type Auditable {
+        required property created_at: datetime {
+            readonly := true;
+            default := datetime_current();
+        }
+    }
+
+    type User extending Auditable {
+        required name: str {
+            constraint exclusive;
+            constraint max_len_value(50);
+        };
+    }
+
+    type Event extending Auditable {
+        required name: str {
+            constraint exclusive;
+            constraint max_len_value(50);
+        }
+        address: str;
+        schedule: datetime;
+        link host: User;
+    }
+}

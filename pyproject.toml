@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ls-crud"
+version = "0.1.0"
+description = ""
+authors = ["Jose <jose@cybergalvez.com>"]
+readme = "README.md"
+packages = [{include = "ls_crud"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+edgedb = "^1.5.0"
+litestar = "^2.0.0b4"
+uvicorn = "^0.23.1"
+httpx = {extras = ["cli"], version = "^0.24.1"}
+pydantic = "^2.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

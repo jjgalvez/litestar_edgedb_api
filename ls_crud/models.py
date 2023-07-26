@@ -19,10 +19,17 @@ class User(BaseModel):
             for x in users
         ]
         return _users
+        
     @classmethod
     def returnUser(self, user: edgedb.Object) -> User:
         return self(**dataclasses.asdict(user))
 
+
+class EventRequestData(BaseModel):
+    name: str
+    address: str
+    schedule: str
+    host_name: str
 
 class Event(BaseModel):
     id: Optional[uuid.UUID] = None
@@ -33,4 +40,9 @@ class Event(BaseModel):
 
     @classmethod
     def returnEvent(self, event: edgedb.Object) -> Event:
-        return self(**dataclasses.asdict(self))
+        return self(**dataclasses.asdict(event))
+
+    @classmethod
+    def returnEvents(self, events : List[edgedb.Object]) -> List[Event]:
+        _events = [self(**dataclasses.asdict(x)) for x in events]
+        return _events

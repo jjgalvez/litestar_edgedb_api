@@ -20,15 +20,16 @@ from .queries import client
 
 from .models import User
 
-# @get(path='/users')
-# async def get_users() -> List[User]:
-#     users = await get_users_qry.get_users(client)
-#     return User.returnUsers(users)
-
 @get(path='/users')
-async def get_users() -> List[get_users_qry.GetUsersResult]:
+async def get_users() -> List[User]:
     users = await get_users_qry.get_users(client)
-    return users
+    return User.returnUsers(users)
+
+# @get(path='/users')
+# async def get_users() -> List[get_users_qry.GetUsersResult]:
+#     users = await get_users_qry.get_users(client)
+#     print(type(users[0]))
+#     return users
 
 class UsersController(Controller):
     path = '/user'
@@ -83,7 +84,7 @@ class UsersController(Controller):
                 )
         return User.returnUser(_user)
 
-    @post()
+    @post('/')
     async def post_user(self, data: User) -> User:
         created_user = await create_user_qry.create_user(client, name=data.name)
         return User.returnUser(created_user)

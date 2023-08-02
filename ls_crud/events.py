@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import List
+
 from litestar import (
     status_codes,
     get, post, put, delete,
@@ -20,19 +22,19 @@ from .queries import (
     update_event_async_edgeql as update_event_qry,
 )
 
-from .models import Event, EventRequestData
+from .models import EventRequestData
 
 @get('/events')
-async def get_events() -> List[Event]:
+async def get_events() -> List[get_events_qry.GetEventsResult]:
     events = await get_events_qry.get_events(client)
-    return Event.returnEvents(events)
+    return events
 
 class EventControler(Controller):
 
     path = '/event'
 
     @get('/{name:str}')
-    async def get_event_by_name(self, name:str) -> Event:
+    async def get_event_by_name(self, name:str) -> get_event_by_name_qry.GetEventByNameResult:
         event = await get_event_by_name_qry.get_event_by_name(
             client,
             name = name
@@ -42,10 +44,10 @@ class EventControler(Controller):
                 status_code=status_codes.HTTP_404_NOT_FOUND,
                 detail=f'{name} does not exsist'
             )
-        return Event.returnEvent(event)
+        return event
 
     @post(path='/')
-    async def post_event(self, data : EventRequestData) -> Event:
+    async def post_event(self, data : EventRequestData) -> create_event_qry.CreateEventResult:
         print(data)
         try:
             created_event = await create_event_qry.create_event(
@@ -65,10 +67,10 @@ class EventControler(Controller):
                 status_code=status_codes.HTTP_400_BAD_REQUEST,
                 detail=f'Event name {data.name} already exsists'
             )
-        return Event.returnEvent(created_event)
+        return created_event
     
     @put('/{current_name:str}')
-    async def update_event(self, current_name:str, data:EventRequestData) -> Event:
+    async def update_event(self, current_name:str, data:EventRequestData) -> update_event_qry.UpdateEventResult:
         try:
             updated_event = await update_event_qry.update_event(
                 client,
@@ -94,10 +96,10 @@ class EventControler(Controller):
                 status_code=status_codes.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f'Update event for {data.name} failed'
             )
-        return Event.returnEvent(updated_event)
+        return updated_event
 
     @delete('/{name:str}', status_code=200)
-    async def delete_event(self, name:str) -> Event:
+    async def delete_event(self, name:str) -> delete_event_qry.DeleteEventResult:
         deleted_event = await delete_event_qry.delete_event(
             client,
             name=name
@@ -107,4 +109,4 @@ class EventControler(Controller):
                 status_code=status_codes.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f'Delete event for {name} failed'
             )
-        return Event.returnEvent(deleted_event)
+        return deleted_event
